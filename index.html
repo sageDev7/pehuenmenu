@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pehuen Coffee House - San Luis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #1a1612;
+            color: #fefcf8;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #1a1612;
+            padding: 2.5rem 1rem 2rem;
+            text-align: center;
+            border-bottom: 3px solid #2f261f;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+        }
+
+        .cafe-subtitle {
+            color: rgba(254, 252, 248, 0.7);
+            font-size: 0.95rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+
+        .filter-container {
+            background: rgba(13, 11, 9, 0.98);
+            padding: 1.2rem;
+            margin: 0;
+            max-width: 100%;
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            overflow-x: auto;
+            overflow-y: hidden;
+            border-bottom: 2px solid #2f261f;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #2f261f rgba(13, 11, 9, 0.5);
+        }
+
+        .filter-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .filter-container::-webkit-scrollbar-track {
+            background: rgba(13, 11, 9, 0.5);
+        }
+
+        .filter-container::-webkit-scrollbar-thumb {
+            background: #2f261f;
+            border-radius: 3px;
+        }
+
+        .filter-container::-webkit-scrollbar-thumb:hover {
+            background: #3d322a;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 2px solid #2f261f;
+            color: #fefcf8;
+            padding: 0.7rem 1.5rem;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: #2f261f;
+            color: #fefcf8;
+            border-color: #3d322a;
+        }
+
+        .filter-btn.active {
+            background: #2f261f;
+            color: #fefcf8;
+            border-color: #3d322a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .category {
+            background: rgba(47, 38, 31, 0.3);
+            border: 1px solid rgba(47, 38, 31, 0.6);
+            padding: 2.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .category.hidden {
+            display: none;
+        }
+
+        .category-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(47, 38, 31, 0.8);
+        }
+
+        .category-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            color: #fefcf8;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-subtitle {
+            color: rgba(254, 252, 248, 0.6);
+            font-size: 0.85rem;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .menu-item {
+            background: rgba(13, 11, 9, 0.6);
+            border: 1px solid rgba(47, 38, 31, 0.5);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            border-color: #2f261f;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(47, 38, 31, 0.5);
+        }
+
+        .item-image-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.4s ease;
+            filter: brightness(0.85);
+        }
+
+        .menu-item:hover .item-image {
+            transform: scale(1.05);
+            filter: brightness(1);
+        }
+
+        .item-content {
+            padding: 1.5rem;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            color: #fefcf8;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .item-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #fefcf8;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .item-description {
+            font-size: 0.9rem;
+            color: rgba(254, 252, 248, 0.7);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .special-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #2f261f;
+            color: #fefcf8;
+            padding: 0.4rem 1rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            z-index: 10;
+            border: 1px solid rgba(254, 252, 248, 0.3);
+        }
+
+        .location-section {
+            background: rgba(47, 38, 31, 0.3);
+            border: 1px solid rgba(47, 38, 31, 0.6);
+            padding: 2.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .location-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #fefcf8;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .location-info {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: rgba(254, 252, 248, 0.8);
+            font-size: 1rem;
+        }
+
+        .location-info p {
+            margin-bottom: 0.8rem;
+        }
+
+        .location-info i {
+            color: #fefcf8;
+            margin-right: 0.5rem;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border: 2px solid #2f261f;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: #2f261f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 25px rgba(47, 38, 31, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
+            border: 2px solid rgba(254, 252, 248, 0.2);
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.15);
+            box-shadow: 0 8px 35px rgba(47, 38, 31, 0.8);
+            border-color: rgba(254, 252, 248, 0.4);
+        }
+
+        .whatsapp-float i {
+            color: #fefcf8;
+            font-size: 2.5rem;
+        }
+
+        footer {
+            background: #0d0b09;
+            padding: 3rem 1rem;
+            text-align: center;
+            color: rgba(254, 252, 248, 0.7);
+            border-top: 3px solid #2f261f;
+        }
+
+        footer p {
+            margin-bottom: 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .footer-icon {
+            color: #fefcf8;
+            margin: 1rem;
+        }
+
+        .social-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .social-links a {
+            color: #fefcf8;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: rgba(254, 252, 248, 0.7);
+            transform: translateY(-3px);
+        }
+
+        .pet-friendly {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #fefcf8;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .logo-img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .category-title {
+                font-size: 2.2rem;
+            }
+
+            .category {
+                padding: 2rem 1.25rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-container {
+                padding: 1rem;
+                gap: 0.6rem;
+            }
+
+            .filter-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.75rem;
+            }
+
+            .map-container {
+                height: 300px;
+            }
+
+            .whatsapp-float {
+                width: 60px;
+                height: 60px;
+                bottom: 22px;
+                right: 22px;
+            }
+
+            .whatsapp-float i {
+                font-size: 2.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 2rem 1rem 1.5rem;
+            }
+
+            .logo-img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .container {
+                padding: 2rem 0.75rem;
+            }
+
+            .category {
+                padding: 1.75rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="./pehuen-logo.png" alt="Pehuen Coffee House" class="logo-img">
+            <p class="cafe-subtitle">Café de Especialidad</p>
+        </div>
+    </header>
+
+    <div class="filter-container">
+        <button class="filter-btn active" data-filter="all">
+            <i class="fas fa-list"></i> Todos
+        </button>
+        <button class="filter-btn" data-filter="desayunos">
+            <i class="fas fa-mug-hot"></i> Desayunos
+        </button>
+        <button class="filter-btn" data-filter="brunch">
+            <i class="fas fa-utensils"></i> Brunch
+        </button>
+        <button class="filter-btn" data-filter="almuerzos">
+            <i class="fas fa-plate-wheat"></i> Almuerzos
+        </button>
+        <button class="filter-btn" data-filter="sandwiches">
+            <i class="fas fa-bread-slice"></i> Sandwiches
+        </button>
+        <button class="filter-btn" data-filter="dulces">
+            <i class="fas fa-cake-candles"></i> Dulces
+        </button>
+        <button class="filter-btn" data-filter="bebidas">
+            <i class="fas fa-coffee"></i> Bebidas
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="category" data-category="desayunos">
+            <div class="category-header">
+                <h2 class="category-title">Desayunos</h2>
+                <p class="category-subtitle">Comenzá tu día con energía</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1495214783159-3503fd1b572d?w=600" alt="Desayuno Completo" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Desayuno Completo</div>
+                            <div class="item-price">$4.500</div>
+                        </div>
+                        <div class="item-description">Café de especialidad, 3 medialunas, manteca, mermelada y jugo natural</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <div class="special-badge"><i class="fas fa-star"></i> Especial</div>
+                        <img src="https://images.unsplash.com/photo-1481070414801-51fd732d7184?w=600" alt="Desayuno Fit" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Desayuno Fit</div>
+                            <div class="item-price">$5.500</div>
+                        </div>
+                        <div class="item-description">Bowl de yogurt griego, granola casera, frutas frescas y miel</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600" alt="Tostadas Artesanales" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Tostadas Artesanales</div>
+                            <div class="item-price">$4.800</div>
+                        </div>
+                        <div class="item-description">Pan de masa madre, palta, huevo poché y semillas</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600" alt="Medialunas" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Medialunas x 3</div>
+                            <div class="item-price">$2.800</div>
+                        </div>
+                        <div class="item-description">Medialunas de manteca recién horneadas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category" data-category="brunch">
+            <div class="category-header">
+                <h2 class="category-title">Brunch</h2>
+                <p class="category-subtitle">Lo mejor de ambos mundos</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=600" alt="Eggs Benedict" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Eggs Benedict</div>
+                            <div class="item-price">$7.200</div>
+                        </div>
+                        <div class="item-description">Muffin inglés, huevos pochados, jamón y salsa holandesa</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=600" alt="Croissant Relleno" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Croissant Premium</div>
+                            <div class="item-price">$6.200</div>
+                        </div>
+                        <div class="item-description">Croissant con jamón crudo, rúcula, queso y tomate</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?w=600" alt="Panqueques" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Panqueques Clásicos</div>
+                            <div class="item-price">$5.800</div>
+                        </div>
+                        <div class="item-description">Stack de panqueques con maple, frutos rojos y manteca</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600" alt="Omelette" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Omelette de Campo</div>
+                            <div class="item-price">$6.500</div>
+                        </div>
+                        <div class="item-description">Omelette con queso, champiñones y finas hierbas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category" data-category="almuerzos">
+            <div class="category-header">
+                <h2 class="category-title">Almuerzos</h2>
+                <p class="category-subtitle">Platos que llenan el alma</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <div class="special-badge"><i class="fas fa-tag"></i> Menú del Día</div>
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600" alt="Menú Ejecutivo" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Menú Ejecutivo</div>
+                            <div class="item-price">$7.800</div>
+                        </div>
+                        <div class="item-description">Entrada + Plato principal + Postre + Bebida (Lun a Vie 12-15hs)</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600" alt="Ensalada César" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Ensalada César</div>
+                            <div class="item-price">$7.200</div>
+                        </div>
+                        <div class="item-description">Lechuga, pollo grillado, crutones, parmesano y aderezo césar</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600" alt="Pasta" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Pasta del Día</div>
+                            <div class="item-price">$8.500</div>
+                        </div>
+                        <div class="item-description">Pasta artesanal con salsa a elección</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600" alt="Quiche" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Quiche Lorraine</div>
+                            <div class="item-price">$7.500</div>
+                        </div>
+                        <div class="item-description">Tarta con panceta, queso gruyere y ensalada</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600" alt="Empanadas" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Empanadas x 6</div>
+                            <div class="item-price">$6.800</div>
+                        </div>
+                        <div class="item-description">Carne, jamón y queso, o caprese</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category" data-category="sandwiches">
+            <div class="category-header">
+                <h2 class="category-title">Sandwiches</h2>
+                <p class="category-subtitle">Clásicos reinventados</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=600" alt="Club Sandwich" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Club Sandwich</div>
+                            <div class="item-price">$8.500</div>
+                        </div>
+                        <div class="item-description">Triple con pollo, panceta, huevo, lechuga y tomate</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://i.pinimg.com/736x/da/82/6d/da826d1e0f7782a856589b8d24d1d5e8.jpg" alt="Sandwich de Lomo" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Sandwich de Lomo</div>
+                            <div class="item-price">$9.200</div>
+                        </div>
+                        <div class="item-description">Lomo, queso, tomate, rúcula y alioli</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600" alt="Hamburguesa" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Hamburguesa Gourmet</div>
+                            <div class="item-price">$9.500</div>
+                        </div>
+                        <div class="item-description">Carne 200g, cheddar, cebolla caramelizada y papas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category" data-category="dulces">
+            <div class="category-header">
+                <h2 class="category-title">Pastelería</h2>
+                <p class="category-subtitle">El toque dulce perfecto</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600" alt="Cheesecake" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Cheesecake de Frutos</div>
+                            <div class="item-price">$4.500</div>
+                        </div>
+                        <div class="item-description">Cheesecake cremoso con salsa de frutos rojos</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=600" alt="Brownie" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Brownie con Helado</div>
+                            <div class="item-price">$4.000</div>
+                        </div>
+                        <div class="item-description">Brownie tibio con helado de vainilla</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=600" alt="Tarta de Limón" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Tarta de Limón</div>
+                            <div class="item-price">$4.200</div>
+                        </div>
+                        <div class="item-description">Tarta de limón con merengue italiano</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600" alt="Tiramisú" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Tiramisú Casero</div>
+                            <div class="item-price">$4.800</div>
+                        </div>
+                        <div class="item-description">Postre italiano con café, mascarpone y cacao</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category" data-category="bebidas">
+            <div class="category-header">
+                <h2 class="category-title">Cafetería</h2>
+                <p class="category-subtitle">Café de especialidad y más</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <div class="special-badge"><i class="fas fa-award"></i> Especialidad</div>
+                        <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600" alt="Espresso" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Espresso</div>
+                            <div class="item-price">$2.400</div>
+                        </div>
+                        <div class="item-description">Café de especialidad, grano seleccionado</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600" alt="Cappuccino" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Cappuccino</div>
+                            <div class="item-price">$3.600</div>
+                        </div>
+                        <div class="item-description">Espresso con espuma de leche cremosa</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=600" alt="Latte" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Latte Macchiato</div>
+                            <div class="item-price">$3.800</div>
+                        </div>
+                        <div class="item-description">Café con leche vaporizada y latte art</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=600" alt="Flat White" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Flat White</div>
+                            <div class="item-price">$3.700</div>
+                        </div>
+                        <div class="item-description">Doble espresso con microespuma</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1517578239113-b03992dcdd25?w=600" alt="Frappé" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Frappé de Café</div>
+                            <div class="item-price">$4.200</div>
+                        </div>
+                        <div class="item-description">Café helado con crema batida</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600" alt="Chocolate" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Chocolate Caliente</div>
+                            <div class="item-price">$3.300</div>
+                        </div>
+                        <div class="item-description">Chocolate premium con crema batida</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600" alt="Té" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Té Premium</div>
+                            <div class="item-price">$2.600</div>
+                        </div>
+                        <div class="item-description">Selección de tés: negro, verde, blanco o frutales</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-image-container">
+                        <img src="https://i.pinimg.com/736x/96/3e/45/963e4532df881254a267e37ce9e1c14c.jpg" alt="Jugos" class="item-image">
+                    </div>
+                    <div class="item-content">
+                        <div class="item-header">
+                            <div class="item-name">Jugos Naturales</div>
+                            <div class="item-price">$3.000</div>
+                        </div>
+                        <div class="item-description">Naranja, pomelo o limonada exprimida</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="location-section">
+            <h2 class="location-title">Visitanos</h2>
+            <div class="location-info">
+                <p><i class="fas fa-map-pin"></i> San Luis, Argentina</p>
+                <p><i class="fas fa-clock"></i> Lunes a Viernes: 8:00 - 21:00hs | Sábados: 9:00 - 21:00hs</p>
+                <p><i class="fas fa-phone"></i> +54 266 400-0000</p>
+                <p class="pet-friendly"><i class="fas fa-paw"></i> Pet Friendly</p>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3334.569854390213!2d-66.33834122435675!3d-33.303914590022735!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95d439007a61be01%3A0x8c99d7bb9b3fb1b0!2sPehu%C3%A9n%20Coffee%20House!5e0!3m2!1ses!2sar!4v1763143202250!5m2!1ses!2sar" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p><i class="fas fa-clock footer-icon"></i> Lun a Vie: 8:00 a 21:00hs | Sáb: 9:00 a 21:00hs</p>
+        <p><i class="fas fa-map-marker-alt footer-icon"></i> San Luis, Argentina</p>
+        
+        <div class="social-links">
+            <a href="https://www.instagram.com/pehuen.coffeehouse" target="_blank" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+        </div>
+        
+        <p style="margin-top: 2rem; font-size: 0.6rem;">Pehuen Coffee House © 2025 - Café de Especialidad <br>
+        Desarrollado por @sageeDev</p>
+    </footer>
+
+    <script>
+        // Funcionalidad de filtrado por categorías
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const categories = document.querySelectorAll('.category');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remover clase active de todos los botones
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Agregar clase active al botón clickeado
+                button.classList.add('active');
+                
+                const filterValue = button.getAttribute('data-filter');
+                
+                // Mostrar/ocultar categorías según el filtro
+                categories.forEach(category => {
+                    if (filterValue === 'all') {
+                        category.classList.remove('hidden');
+                    } else {
+                        if (category.getAttribute('data-category') === filterValue) {
+                            category.classList.remove('hidden');
+                        } else {
+                            category.classList.add('hidden');
+                        }
+                    }
+                });
+                
+                // Scroll suave hacia el inicio del contenedor
+                window.scrollTo({
+                    top: document.querySelector('.container').offsetTop - 30,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
